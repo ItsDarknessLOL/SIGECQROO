@@ -1,0 +1,280 @@
+<!-- SECCIÓN MAPA — Media Superior -->
+<section id="mapa" class="page-section">
+
+    <!-- Hero -->
+    <div class="relative overflow-hidden text-white min-h-[200px] flex items-center hero-aurora-section">
+        <div class="absolute inset-0 bg-slate-900">
+            <div class="aurora-bg"></div>
+            <div class="aurora-bg" style="animation-delay: -5s;"></div>
+            <div class="aurora-bg" style="animation-delay: -10s;"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="flex items-center gap-3 mb-2" data-aos="fade-down">
+                <span class="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/30 border border-indigo-400/40 rounded-full text-indigo-200 text-sm font-medium">
+                    <i class="fas fa-graduation-cap"></i> Media Superior
+                </span>
+            </div>
+            <h1 class="font-display text-4xl md:text-5xl font-bold mb-3" data-aos="fade-down">Mapa de Preparatorias</h1>
+            <p class="text-rose-100 text-lg max-w-xl" data-aos="fade-up">Explora y compara las preparatorias de Cancún. Traza rutas, mide distancias y descubre las escuelas por zona.</p>
+        </div>
+    </div>
+
+    <!-- Cuerpo principal -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col lg:flex-row gap-5">
+
+            <!-- PANEL LATERAL -->
+            <div class="lg:w-[300px] shrink-0 space-y-4">
+
+                <!-- Filtros -->
+                <div class="glass rounded-2xl p-5 shadow-lg sticky top-24 space-y-5" data-aos="fade-right">
+                    <h3 class="font-display text-lg font-bold text-dark flex items-center gap-2 cursor-pointer" onclick="toggleMapFiltersPanel()">
+                        <i class="fas fa-sliders-h text-rose-500"></i> Filtros
+                        <i class="fas fa-chevron-down ml-auto text-slate-400 text-sm transition-transform duration-300" id="filters-chevron"></i>
+                    </h3>
+                    <div id="map-filters-content">
+
+                    <!-- Sector -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Sector</label>
+                        <div class="flex gap-2">
+                            <label class="flex-1 flex items-center gap-2 cursor-pointer p-2.5 rounded-xl border-2 border-cyan-200 hover:border-cyan-400 transition-all bg-cyan-50 sector-toggle" id="lbl-publico" onclick="toggleSector('publico')">
+                                <input type="checkbox" id="chk-publico" value="publico" checked class="hidden">
+                                <div class="w-4 h-4 rounded-full bg-cyan-500 flex items-center justify-center" id="dot-publico">
+                                    <i class="fas fa-check text-white text-[8px]"></i>
+                                </div>
+                                <span class="text-sm font-medium text-slate-700">Público</span>
+                            </label>
+                            <label class="flex-1 flex items-center gap-2 cursor-pointer p-2.5 rounded-xl border-2 border-rose-200 hover:border-rose-400 transition-all bg-rose-50 sector-toggle" id="lbl-privado" onclick="toggleSector('privado')">
+                                <input type="checkbox" id="chk-privado" value="privado" checked class="hidden">
+                                <div class="w-4 h-4 rounded-full bg-rose-500 flex items-center justify-center" id="dot-privado">
+                                    <i class="fas fa-check text-white text-[8px]"></i>
+                                </div>
+                                <span class="text-sm font-medium text-slate-700">Privado</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Calificación -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                            <i class="fas fa-star text-yellow-400 mr-1"></i> Calificación mínima
+                        </label>
+                        <div class="flex gap-1.5">
+                            <button class="rating-pill active" data-val="0" onclick="setRatingFilter(this,0)">Todas</button>
+                            <button class="rating-pill" data-val="3.5" onclick="setRatingFilter(this,3.5)">3.5+</button>
+                            <button class="rating-pill" data-val="4" onclick="setRatingFilter(this,4)">4.0+</button>
+                            <button class="rating-pill" data-val="4.5" onclick="setRatingFilter(this,4.5)">4.5+</button>
+                        </div>
+                    </div>
+
+                    <!-- Zona -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                            <i class="fas fa-map-marker-alt text-indigo-400 mr-1"></i> Zona
+                        </label>
+                        <select id="filter-zone" onchange="applyMapFilters()" class="w-full px-3 py-2 rounded-xl border border-indigo-200 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none text-sm">
+                            <option value="all">Todas las zonas</option>
+                            <option value="norte">Zona Norte</option>
+                            <option value="centro">Zona Centro</option>
+                            <option value="sur">Zona Sur</option>
+                            <option value="puertoMorelos">Puerto Morelos</option>
+                        </select>
+                    </div>
+
+                    <!-- Tipo de mapa -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                            <i class="fas fa-layer-group text-slate-400 mr-1"></i> Tipo de Mapa
+                        </label>
+                        <div class="grid grid-cols-3 gap-1.5">
+                            <button class="map-type-btn active" onclick="setMapType('osm')" id="btn-osm"><i class="fas fa-map mr-1"></i>Normal</button>
+                            <button class="map-type-btn" onclick="setMapType('satellite')" id="btn-satellite"><i class="fas fa-satellite mr-1"></i>Satélite</button>
+                            <button class="map-type-btn" onclick="setMapType('dark')" id="btn-dark"><i class="fas fa-moon mr-1"></i>Oscuro</button>
+                        </div>
+                    </div>
+
+                    <button onclick="applyMapFilters()" class="w-full py-2.5 bg-gradient-to-r from-cyan-600 to-indigo-600 text-white rounded-xl font-semibold hover:opacity-90 transition-all shadow-md text-sm">
+                        <i class="fas fa-search mr-2"></i>Aplicar Filtros
+                    </button>
+
+                    <div class="text-center text-sm text-slate-500">
+                        <span id="map-school-count" class="font-semibold text-indigo-600">—</span> escuelas visibles
+                    </div>
+                </div>
+
+                <!-- Herramientas -->
+                <div class="glass rounded-2xl p-5 shadow-lg" data-aos="fade-right" data-aos-delay="100">
+                    <h3 class="font-display text-lg font-bold text-dark flex items-center gap-2 mb-4">
+                        <i class="fas fa-tools text-cyan-500"></i> Herramientas
+                    </h3>
+                    <div class="space-y-2">
+                        <button onclick="locateUser()" id="btn-locate" class="tool-btn group">
+                            <div class="tool-btn-icon bg-green-100 group-hover:bg-green-200">
+                                <i class="fas fa-crosshairs text-green-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-slate-700">Mi Ubicación</div>
+                                <div class="text-xs text-slate-400">Centrar mapa aquí</div>
+                            </div>
+                        </button>
+
+                        <button onclick="findNearest()" id="btn-nearest" class="tool-btn group">
+                            <div class="tool-btn-icon bg-blue-100 group-hover:bg-blue-200">
+                                <i class="fas fa-map-pin text-blue-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-slate-700">Más Cercana</div>
+                                <div class="text-xs text-slate-400">Con mi ubicación</div>
+                            </div>
+                        </button>
+
+                        <button onclick="toggleRouteMode()" id="btn-route" class="tool-btn group">
+                            <div class="tool-btn-icon bg-purple-100 group-hover:bg-purple-200">
+                                <i class="fas fa-route text-purple-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-slate-700">Trazar Ruta</div>
+                                <div class="text-xs text-slate-400" id="route-mode-label">Desde mi ubicación</div>
+                            </div>
+                            <span id="route-badge" class="hidden ml-auto px-2 py-0.5 bg-purple-500 text-white text-xs rounded-full">Activo</span>
+                        </button>
+
+                        <button onclick="toggleMeasureMode()" id="btn-measure" class="tool-btn group">
+                            <div class="tool-btn-icon bg-orange-100 group-hover:bg-orange-200">
+                                <i class="fas fa-ruler text-orange-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-slate-700">Medir Distancia</div>
+                                <div class="text-xs text-slate-400" id="measure-mode-label">Clic en 2 puntos</div>
+                            </div>
+                            <span id="measure-badge" class="hidden ml-auto px-2 py-0.5 bg-orange-500 text-white text-xs rounded-full">Activo</span>
+                        </button>
+
+                        <button onclick="clearMapExtras()" class="tool-btn group">
+                            <div class="tool-btn-icon bg-slate-100 group-hover:bg-slate-200">
+                                <i class="fas fa-times text-slate-500"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-semibold text-slate-700">Limpiar Mapa</div>
+                                <div class="text-xs text-slate-400">Quitar rutas y medidas</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Resultado herramientas -->
+                <div id="tool-result-card" class="hidden glass rounded-2xl p-4 shadow-lg border-l-4 border-cyan-500" data-aos="fade-up">
+                    <div id="tool-result-content"></div>
+                </div>
+
+                <!-- Leyenda de Zonas -->
+                <div class="glass rounded-2xl p-5 shadow-lg" data-aos="fade-right" data-aos-delay="150">
+                    <h3 class="font-display text-sm font-bold text-dark flex items-center gap-2 mb-3">
+                        <i class="fas fa-map text-slate-400"></i> Zonas de Cancún
+                    </h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center gap-3 cursor-pointer hover:opacity-70 transition py-1" onclick="filterByZone('norte')">
+                            <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                            <span class="text-slate-700 flex-1">Zona Norte</span>
+                            <span class="text-xs font-semibold text-blue-500" id="zone-count-norte">—</span>
+                        </div>
+                        <div class="flex items-center gap-3 cursor-pointer hover:opacity-70 transition py-1" onclick="filterByZone('centro')">
+                            <div class="w-3 h-3 rounded-full bg-indigo-500"></div>
+                            <span class="text-slate-700 flex-1">Zona Centro</span>
+                            <span class="text-xs font-semibold text-indigo-500" id="zone-count-centro">—</span>
+                        </div>
+                        <div class="flex items-center gap-3 cursor-pointer hover:opacity-70 transition py-1" onclick="filterByZone('sur')">
+                            <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+                            <span class="text-slate-700 flex-1">Zona Sur</span>
+                            <span class="text-xs font-semibold text-orange-500" id="zone-count-sur">—</span>
+                        </div>
+                        <div class="flex items-center gap-3 cursor-pointer hover:opacity-70 transition py-1" onclick="filterByZone('puertoMorelos')">
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="text-slate-700 flex-1">Puerto Morelos</span>
+                            <span class="text-xs font-semibold text-green-500" id="zone-count-puertoMorelos">—</span>
+                        </div>
+                        <hr class="border-slate-100 my-1">
+                        <div class="flex items-center gap-3 mt-1">
+                            <div class="w-3 h-3 rounded-full bg-cyan-400 border-2 border-cyan-600"></div>
+                            <span class="text-slate-500 text-xs">Público</span>
+                            <div class="w-3 h-3 rounded-full bg-rose-400 border-2 border-rose-600 ml-2"></div>
+                            <span class="text-slate-500 text-xs">Privado</span>
+                        </div>
+                    </div>
+                </div>
+                </div><!-- end map-filters-content -->
+            </div>
+
+            <!-- MAPA -->
+            <div class="flex-1 flex flex-col gap-4">
+
+                <!-- Banner modo activo -->
+                <div id="active-mode-banner" class="hidden items-center gap-3 px-4 py-3 rounded-xl bg-purple-50 border border-purple-200 text-purple-700 text-sm font-medium">
+                    <i class="fas fa-info-circle"></i>
+                    <span id="active-mode-text"></span>
+                    <button onclick="cancelActiveMode()" class="ml-auto text-purple-400 hover:text-purple-700 transition">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+
+                <div class="glass rounded-2xl shadow-2xl overflow-hidden" data-aos="fade-left" style="height:600px; min-height:480px;">
+                    <div id="map-full" style="height:100%;width:100%;"></div>
+                </div>
+
+                <!-- Estadísticas por zona -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div class="glass rounded-xl p-3 text-center shadow cursor-pointer hover:shadow-md transition border-t-2 border-blue-400" onclick="filterByZone('norte')">
+                        <div class="text-2xl font-bold text-blue-600" id="zs-norte">—</div>
+                        <div class="text-xs text-slate-500 mt-0.5">Zona Norte</div>
+                    </div>
+                    <div class="glass rounded-xl p-3 text-center shadow cursor-pointer hover:shadow-md transition border-t-2 border-indigo-400" onclick="filterByZone('centro')">
+                        <div class="text-2xl font-bold text-indigo-600" id="zs-centro">—</div>
+                        <div class="text-xs text-slate-500 mt-0.5">Zona Centro</div>
+                    </div>
+                    <div class="glass rounded-xl p-3 text-center shadow cursor-pointer hover:shadow-md transition border-t-2 border-orange-400" onclick="filterByZone('sur')">
+                        <div class="text-2xl font-bold text-orange-600" id="zs-sur">—</div>
+                        <div class="text-xs text-slate-500 mt-0.5">Zona Sur</div>
+                    </div>
+                    <div class="glass rounded-xl p-3 text-center shadow cursor-pointer hover:shadow-md transition border-t-2 border-green-400" onclick="filterByZone('puertoMorelos')">
+                        <div class="text-2xl font-bold text-green-600" id="zs-pm">—</div>
+                        <div class="text-xs text-slate-500 mt-0.5">Puerto Morelos</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.rating-pill {
+    flex:1; padding:5px 2px; font-size:.7rem; font-weight:600;
+    border-radius:8px; border:2px solid #e2e8f0; color:#64748b;
+    background:white; cursor:pointer; transition:all .15s; text-align:center;
+}
+.rating-pill.active { border-color:#f59e0b; background:#fef3c7; color:#92400e; }
+.rating-pill:hover:not(.active) { background:#f8fafc; }
+
+.tool-btn {
+    width:100%; display:flex; align-items:center; gap:10px;
+    padding:8px 10px; border-radius:12px; border:1.5px solid transparent;
+    background:transparent; cursor:pointer; transition:all .15s; text-align:left;
+}
+.tool-btn:hover { background:#f8fafc; border-color:#e2e8f0; }
+.tool-btn.active-tool { background:#eff6ff; border-color:#bfdbfe; }
+.tool-btn-icon {
+    width:34px; height:34px; border-radius:9px;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; transition:background .15s;
+}
+
+.sector-toggle { user-select:none; }
+
+@keyframes markerPulse {
+    0%,100% { transform:scale(1); }
+    50% { transform:scale(1.2); }
+}
+.marker-nearest { animation:markerPulse 1s ease-in-out infinite; }
+
+#map-full .leaflet-control-zoom { border-radius:12px; overflow:hidden; }
+</style>

@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGECQROO - Sistema de Información Geográfica Educativa Cancún Quintana Roo</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                        display: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#0891b2',
+                        secondary: '#06b6d4',
+                        accent: '#22d3ee',
+                        dark: '#164e63',
+                        light: '#ecfeff',
+                        surface: '#ffffff',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Estilos globales -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-slate-50 text-slate-800 overflow-x-hidden">
+
+    <!-- ========== PANEL DE ACCESIBILIDAD ========== -->
+    <button class="accessibility-toggle" onclick="toggleAccessibilityPanel()" aria-label="Opciones de accesibilidad">
+        <i class="fas fa-universal-access"></i>
+    </button>
+
+    <div class="accessibility-panel" id="accessibility-panel">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-200 dark:border-slate-600">
+                <h3 class="font-display font-bold text-xl text-dark dark:text-white flex items-center gap-2">
+                    <i class="fas fa-universal-access text-cyan-600"></i>
+                    Accesibilidad
+                </h3>
+                <button onclick="toggleAccessibilityPanel()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Modo Oscuro -->
+            <div class="mb-6">
+                <h4 class="font-semibold text-dark dark:text-white mb-3 flex items-center gap-2">
+                    <i class="fas fa-moon text-indigo-500"></i>
+                    Tema de color
+                </h4>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="setTheme('light')" class="theme-btn p-3 rounded-xl border-2 border-cyan-200 dark:border-slate-600 hover:border-cyan-500 transition-all flex flex-col items-center gap-1" data-theme="light">
+                        <i class="fas fa-sun text-yellow-500 text-xl"></i>
+                        <span class="text-sm">Claro</span>
+                    </button>
+                    <button onclick="setTheme('dark')" class="theme-btn p-3 rounded-xl border-2 border-slate-200 dark:border-slate-600 hover:border-cyan-500 transition-all flex flex-col items-center gap-1 bg-slate-100 dark:bg-slate-700" data-theme="dark">
+                        <i class="fas fa-moon text-indigo-400 text-xl"></i>
+                        <span class="text-sm">Oscuro</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tamaño de fuente -->
+            <div class="mb-6">
+                <h4 class="font-semibold text-dark dark:text-white mb-3 flex items-center gap-2">
+                    <i class="fas fa-text-height text-cyan-600"></i>
+                    Tamaño de texto
+                </h4>
+                <div class="flex gap-2">
+                    <button onclick="setFontSize('small')" class="flex-1 py-2 px-3 rounded-lg border border-slate-200 dark:border-slate-600 hover:bg-cyan-50 dark:hover:bg-slate-700 text-sm transition-all" data-size="small">A</button>
+                    <button onclick="setFontSize('normal')" class="flex-1 py-2 px-3 rounded-lg border-2 border-cyan-500 bg-cyan-50 dark:bg-slate-700 text-base font-semibold transition-all" data-size="normal">A</button>
+                    <button onclick="setFontSize('large')" class="flex-1 py-2 px-3 rounded-lg border border-slate-200 dark:border-slate-600 hover:bg-cyan-50 dark:hover:bg-slate-700 text-lg transition-all" data-size="large">A</button>
+                    <button onclick="setFontSize('xlarge')" class="flex-1 py-2 px-3 rounded-lg border border-slate-200 dark:border-slate-600 hover:bg-cyan-50 dark:hover:bg-slate-700 text-xl transition-all" data-size="xlarge">A</button>
+                </div>
+            </div>
+
+            <!-- Alto contraste -->
+            <div class="mb-6">
+                <h4 class="font-semibold text-dark dark:text-white mb-3 flex items-center gap-2">
+                    <i class="fas fa-adjust text-cyan-600"></i>
+                    Contraste
+                </h4>
+                <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+                    <span class="text-sm">Alto contraste</span>
+                    <input type="checkbox" id="high-contrast-toggle" onchange="toggleHighContrast()" class="w-5 h-5 text-cyan-600 rounded focus:ring-cyan-500">
+                </label>
+            </div>
+
+            <!-- Modo dislexia -->
+            <div class="mb-6">
+                <h4 class="font-semibold text-dark dark:text-white mb-3 flex items-center gap-2">
+                    <i class="fas fa-font text-cyan-600"></i>
+                    Tipo de fuente
+                </h4>
+                <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+                    <span class="text-sm">Modo dislexia amigable</span>
+                    <input type="checkbox" id="dyslexia-toggle" onchange="toggleDyslexiaMode()" class="w-5 h-5 text-cyan-600 rounded focus:ring-cyan-500">
+                </label>
+            </div>
+
+            <!-- Reducir animaciones -->
+            <div class="mb-6">
+                <h4 class="font-semibold text-dark dark:text-white mb-3 flex items-center gap-2">
+                    <i class="fas fa-stopwatch text-cyan-600"></i>
+                    Animaciones
+                </h4>
+                <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-600 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-all">
+                    <span class="text-sm">Reducir movimiento</span>
+                    <input type="checkbox" id="reduce-motion-toggle" onchange="toggleReduceMotion()" class="w-5 h-5 text-cyan-600 rounded focus:ring-cyan-500">
+                </label>
+            </div>
+
+            <!-- Espaciado -->
+            <div class="mb-6">
+                <h4 class="font-semibold text-dark dark:text-white mb-3 flex items-center gap-2">
+                    <i class="fas fa-arrows-alt-v text-cyan-600"></i>
+                    Espaciado
+                </h4>
+                <div class="flex gap-2">
+                    <button onclick="setSpacing('normal')" class="flex-1 py-2 rounded-lg border-2 border-cyan-500 bg-cyan-50 dark:bg-slate-700 text-sm font-semibold transition-all" data-spacing="normal">Normal</button>
+                    <button onclick="setSpacing('wide')" class="flex-1 py-2 rounded-lg border border-slate-200 dark:border-slate-600 hover:bg-cyan-50 dark:hover:bg-slate-700 text-sm transition-all" data-spacing="wide">Amplio</button>
+                </div>
+            </div>
+
+            <!-- Reset -->
+            <button onclick="resetAccessibility()" class="w-full py-3 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-semibold hover:bg-slate-300 dark:hover:bg-slate-600 transition-all flex items-center justify-center gap-2">
+                <i class="fas fa-undo"></i>
+                Restablecer preferencias
+            </button>
+        </div>
+    </div>
+
+    <!-- ========== LOADING SCREEN ========== -->
+    <div id="loading-screen" class="fixed inset-0 bg-slate-900 z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="relative mb-6">
+            <div class="w-20 h-20 border-4 border-cyan-800 border-t-cyan-400 rounded-full animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <i class="fas fa-graduation-cap text-cyan-400 text-2xl"></i>
+            </div>
+        </div>
+        <div class="text-center">
+            <h2 class="text-white font-display text-xl font-bold mb-1">Cargando SIGECQROO</h2>
+            <p class="text-slate-400 text-sm">Sistema de Información Geográfica Educativa</p>
+            <div class="mt-4 flex gap-1 justify-center">
+                <div class="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style="animation-delay:0s"></div>
+                <div class="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style="animation-delay:.15s"></div>
+                <div class="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style="animation-delay:.3s"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== FONDO DECORATIVO ========== -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div class="bubble w-64 h-64 -top-20 -left-20" style="animation-delay: 0s;"></div>
+        <div class="bubble w-96 h-96 top-1/3 -right-20" style="animation-delay: 2s;"></div>
+        <div class="bubble w-48 h-48 bottom-20 left-1/4" style="animation-delay: 4s;"></div>
+    </div>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="fixed w-full z-50 glass shadow-lg transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="navigateTo('inicio')">
+                    <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center shadow-lg mr-3 transform hover:scale-110 transition-transform">
+                        <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-display font-bold text-2xl text-dark tracking-tight">SIGECQROO</h1>
+                        <p class="text-xs text-stone-900 font-medium">Portal Educativo</p>
+                    </div>
+                </div>
+
+                <div class="hidden md:flex space-x-8">
+                    <button onclick="navigateTo('inicio')" class="nav-link px-3 py-2 text-sm font-medium text-slate-700 hover:text-primary transition-colors flex items-center gap-2" data-page="inicio">
+                        <i class="fas fa-home"></i> Inicio
+                    </button>
+                    <button onclick="navigateTo('mapa')" class="nav-link px-3 py-2 text-sm font-medium text-slate-700 hover:text-primary transition-colors flex items-center gap-2" data-page="mapa">
+                        <i class="fas fa-map-marked-alt"></i> Mapa
+                    </button>
+                    <button onclick="navigateTo('catalogo')" class="nav-link px-3 py-2 text-sm font-medium text-slate-700 hover:text-primary transition-colors flex items-center gap-2" data-page="catalogo">
+                        <i class="fas fa-th-large"></i> Catálogo
+                    </button>
+                    <button onclick="navigateTo('informacion')" class="nav-link px-3 py-2 text-sm font-medium text-slate-700 hover:text-primary transition-colors flex items-center gap-2" data-page="informacion">
+                        <i class="fas fa-info-circle"></i> Información
+                    </button>
+                    <button onclick="navigateTo('acerca')" class="nav-link px-3 py-2 text-sm font-medium text-slate-700 hover:text-primary transition-colors flex items-center gap-2" data-page="acerca">
+                        <i class="fas fa-users"></i> Acerca de
+                    </button>
+                </div>
+
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()" class="text-slate-700 hover:text-primary focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden glass border-t border-cyan-100">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <button onclick="navigateTo('inicio')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-primary hover:bg-cyan-50">
+                    <i class="fas fa-home mr-2"></i> Inicio
+                </button>
+                <button onclick="navigateTo('mapa')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-primary hover:bg-cyan-50">
+                    <i class="fas fa-map-marked-alt mr-2"></i> Mapa
+                </button>
+                <button onclick="navigateTo('catalogo')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-primary hover:bg-cyan-50">
+                    <i class="fas fa-th-large mr-2"></i> Catálogo
+                </button>
+                <button onclick="navigateTo('informacion')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-primary hover:bg-cyan-50">
+                    <i class="fas fa-info-circle mr-2"></i> Información
+                </button>
+                <button onclick="navigateTo('acerca')" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-primary hover:bg-cyan-50">
+                    <i class="fas fa-users mr-2"></i> Acerca de
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== CONTENIDO PRINCIPAL ========== -->
+    <main class="pt-20 relative z-10 min-h-screen">
+        <!-- Secciones cargadas dinámicamente -->
+        <div id="page-inicio"></div>
+        <div id="page-mapa"></div>
+        <div id="page-catalogo"></div>
+        <div id="page-informacion"></div>
+        <div id="page-acerca"></div>
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="bg-slate-900 text-white py-12 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-graduation-cap text-white"></i>
+                        </div>
+                        <h3 class="font-display font-bold text-xl">SIGECQROO</h3>
+                    </div>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Sistema de Información Geográfica Educativa Cancún Quintana Roo. Plataforma dedicada a la información y localización de escuelas en Cancún, Quintana Roo.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-cyan-400">Enlaces Rápidos</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><button onclick="navigateTo('inicio')" class="hover:text-white transition-colors">Inicio</button></li>
+                        <li><button onclick="navigateTo('mapa')" class="hover:text-white transition-colors">Mapa</button></li>
+                        <li><button onclick="navigateTo('catalogo')" class="hover:text-white transition-colors">Catálogo</button></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-cyan-400">Recursos</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="https://seq.qroo.gob.mx/calendarioescolarqr/" class="hover:text-white transition-colors">Calendario Escolar</a></li>
+                        <li><a href="https://www.seq.gob.mx/tramites/" class="hover:text-white transition-colors">Trámites SEQ</a></li>
+                        <li><a href="https://www.gob.mx/becasbenitojuarez" class="hover:text-white transition-colors">Becas Educativas</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-cyan-400">Contacto</h4>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><i class="fas fa-envelope mr-2"></i> info@sigecqroo.edu.mx</li>
+                        <li><i class="fas fa-phone mr-2"></i> (998) xxx xxxx</li>
+                        <li><i class="fas fa-map-marker-alt mr-2"></i> Cancún, Q. Roo</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-slate-500 text-sm">&copy; 2026 SIGECQROO. Todos los derechos reservados.</p>
+                <div class="flex space-x-4 mt-4 md:mt-0">
+                    <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-cyan-600 transition-colors">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-cyan-600 transition-colors">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-cyan-600 transition-colors">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== MODAL POLÍTICAS DE PRIVACIDAD ========== -->
+    <div id="privacy-modal-overlay" style="display:none;">
+        <div id="privacy-modal-box">
+            <!-- Cabecera -->
+            <div class="gradient-bg p-6 rounded-t-3xl text-white text-center">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-shield-alt text-3xl text-white"></i>
+                </div>
+                <h2 class="font-display text-xl font-bold">Aviso de Privacidad y Uso de Datos</h2>
+                <p class="text-white/80 text-sm mt-1">SIGECQROO — Sistema de Información Geográfica Educativa Cancún Quintana Roo</p>
+            </div>
+            <!-- Contenido -->
+            <div class="p-6 space-y-4 text-sm text-slate-700 dark:text-slate-300">
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 bg-cyan-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-info-circle text-cyan-600 text-sm"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-800 dark:text-white mb-1">¿Qué es SIGECQROO?</h4>
+                        <p>Es una plataforma de consulta pública de información geográfica educativa del municipio de Cancún, Quintana Roo, desarrollada por la <strong>Secretaría de Educación de Quintana Roo (SEQ)</strong>.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-database text-blue-600 text-sm"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Datos que se muestran</h4>
+                        <p>El portal presenta <strong>información pública</strong> de instituciones educativas: nombre, dirección, nivel, sector, servicios y ubicación geográfica. No se recopilan datos personales de los visitantes.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-map-marker-alt text-green-600 text-sm"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Uso del mapa interactivo</h4>
+                        <p>Las capas cartográficas utilizan servicios de terceros (OpenStreetMap, Esri, CARTO). Al usar el mapa, acepta sus términos de uso respectivos. La geolocalización de su dispositivo <strong>no es solicitada</strong>.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-cookie-bite text-purple-600 text-sm"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Almacenamiento local</h4>
+                        <p>Se usa <code class="bg-slate-100 dark:bg-slate-700 px-1 rounded">localStorage</code> únicamente para guardar sus preferencias de accesibilidad (tema, tamaño de fuente). No se transmite información a servidores externos.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-balance-scale text-yellow-600 text-sm"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-800 dark:text-white mb-1">Marco legal</h4>
+                        <p>Este sistema opera bajo la <strong>Ley General de Transparencia y Acceso a la Información Pública</strong> y la <strong>Ley Federal de Protección de Datos Personales en Posesión de Sujetos Obligados</strong>.</p>
+                    </div>
+                </div>
+                <div class="bg-cyan-50 dark:bg-slate-700/50 border border-cyan-100 dark:border-cyan-900 rounded-xl p-3 text-xs text-slate-600 dark:text-slate-400">
+                    <i class="fas fa-envelope text-cyan-500 mr-1"></i>
+                    Para dudas sobre el uso de datos: <strong>info@sigecqroo.edu.mx</strong> &nbsp;|&nbsp;
+                    <i class="fas fa-map-marker-alt text-cyan-500 mr-1"></i> Cancún, Quintana Roo, México.
+                </div>
+            </div>
+            <!-- Botones -->
+            <div class="px-6 pb-6 flex flex-col sm:flex-row gap-3">
+                <button onclick="acceptPrivacy()"
+                    class="flex-1 py-3 bg-gradient-to-r from-cyan-600 to-cyan-500 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-check-circle"></i> Entendido, continuar
+                </button>
+                <button onclick="window.location.href='https://www.gob.mx'"
+                    class="flex-1 py-3 border-2 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 rounded-xl font-semibold hover:border-red-400 hover:text-red-500 transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-times-circle"></i> No acepto, salir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MODAL DE DETALLES DE ESCUELA ========== -->
+    <div id="school-modal" class="fixed inset-0 z-[60] hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-900 bg-opacity-75 transition-opacity backdrop-blur-sm" onclick="closeModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full dark:bg-slate-800">
+                <div id="modal-content">
+                    <!-- Contenido dinámico -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== TUTORIAL INTERACTIVO ========== -->
+    <div id="tutorial-overlay">
+        <div id="tut-backdrop"></div>
+        <div id="tut-highlight-box"></div>
+        <div id="tut-arrow"></div>
+        <div id="tut-card">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+                <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#0891b2,#22d3ee);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fas fa-graduation-cap" style="color:white;font-size:15px;"></i>
+                </div>
+                <div style="flex:1;min-width:0;">
+                    <p style="font-size:11px;color:#0891b2;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin:0;">Tutorial SIGECQROO</p>
+                    <p id="tut-step-label" style="font-size:11px;color:#94a3b8;margin:0;">Paso 1 de 7</p>
+                </div>
+                <button onclick="closeTutorial()" style="background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;line-height:1;padding:2px;flex-shrink:0;" title="Cerrar tutorial">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <h3 id="tut-title" style="font-size:1.15rem;font-weight:700;color:#1e293b;margin:0 0 8px;font-family:'Montserrat',sans-serif;"></h3>
+            <p id="tut-desc" style="font-size:0.875rem;color:#64748b;line-height:1.6;margin:0 0 20px;"></p>
+            <div id="tut-target-label" style="display:none;background:#ecfeff;border:1px solid #a5f3fc;border-radius:8px;padding:6px 10px;font-size:0.75rem;color:#0891b2;margin-bottom:14px;display:flex;align-items:center;gap:6px;">
+                <i class="fas fa-arrow-pointer"></i>
+                <span id="tut-target-text"></span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                <div style="display:flex;gap:5px;" id="tut-dots"></div>
+                <div style="display:flex;gap:8px;">
+                    <button id="tut-prev-btn" onclick="tutPrev()"
+                        style="padding:8px 16px;border-radius:10px;border:1.5px solid #e2e8f0;background:none;font-size:0.8rem;font-weight:600;color:#64748b;cursor:pointer;transition:all 0.2s;font-family:inherit;">
+                        ← Anterior
+                    </button>
+                    <button id="tut-next-btn" onclick="tutNext()"
+                        style="padding:8px 18px;border-radius:10px;background:linear-gradient(135deg,#0891b2,#06b6d4);color:white;border:none;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:inherit;">
+                        Siguiente →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón Tutorial -->
+    <button id="tutorial-trigger-btn" onclick="startTutorial()" title="Tutorial interactivo" aria-label="Iniciar tutorial">
+        <i class="fas fa-question"></i>
+    </button>
+
+    <!-- ========== CHATBOT ========== -->
+    <button id="chatbot-btn" onclick="toggleChatbot()" aria-label="Abrir asistente virtual">
+        <i class="fas fa-robot" id="chatbot-btn-icon"></i>
+        <span class="chatbot-badge" id="chatbot-badge">1</span>
+    </button>
+
+    <div id="chatbot-window">
+        <div class="chatbot-header">
+            <div style="display:flex;align-items:center;">
+                <div class="bot-avatar"><i class="fas fa-robot"></i></div>
+                <div>
+                    <p style="font-weight:600;font-size:0.875rem;margin:0;">Asistente SIGECQROO</p>
+                    <p style="font-size:0.7rem;opacity:0.85;margin:0;display:flex;align-items:center;gap:4px;">
+                        <span style="width:6px;height:6px;border-radius:50%;background:#4ade80;display:inline-block;"></span>En línea
+                    </p>
+                </div>
+            </div>
+            <button onclick="toggleChatbot()" style="background:rgba(255,255,255,0.2);border:none;color:white;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="chatbot-messages" id="chatbot-messages"></div>
+        <div class="chat-quick-btns" id="chat-quick-btns">
+            <button class="chat-quick-btn" onclick="sendQuickMsg('¿Cómo busco una escuela?')">🔍 Buscar escuela</button>
+            <button class="chat-quick-btn" onclick="sendQuickMsg('¿Qué niveles educativos hay?')">🎓 Niveles</button>
+            <button class="chat-quick-btn" onclick="sendQuickMsg('¿Cómo uso el mapa?')">🗺️ El mapa</button>
+            <button class="chat-quick-btn" onclick="sendQuickMsg('¿Qué es SIGECQROO?')">ℹ️ ¿Qué es esto?</button>
+            <button class="chat-quick-btn" onclick="sendQuickMsg('¿Hay becas disponibles?')">💰 Becas</button>
+            <button class="chat-quick-btn" onclick="sendQuickMsg('¿Cómo contactar una escuela?')">📞 Contacto</button>
+        </div>
+        <div class="chatbot-input-area">
+            <textarea id="chatbot-input" rows="1" placeholder="Escribe tu pregunta..." onkeydown="chatKeydown(event)" oninput="autoResizeChat(this)"></textarea>
+            <button class="chatbot-send-btn" id="chatbot-send" onclick="sendChatMessage()">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ========== SCRIPTS ========== -->
+    <!-- Leaflet -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- AOS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Módulos JS -->
+    <script src="js/modules/config.js"></script>
+    <script src="js/modules/accessibility.js"></script>
+    <script src="js/modules/navigation.js"></script>
+    <script src="js/modules/maps.js"></script>
+    <script src="js/modules/catalog.js"></script>
+    <script src="js/modules/modal.js"></script>
+    <script src="js/modules/tutorial.js"></script>
+    <script src="js/modules/chatbot.js"></script>
+    <script src="js/modules/privacy.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- Carga dinámica de páginas → inicializa la app solo cuando el DOM de todas las páginas ya está listo -->
+    <script>
+    (async function loadPages() {
+        const pages = ['inicio', 'mapa', 'catalogo', 'informacion', 'acerca'];
+        for (const page of pages) {
+            try {
+                const response = await fetch(`pages/${page}.html`);
+                const html = await response.text();
+                const container = document.getElementById(`page-${page}`);
+                if (container) container.innerHTML = html;
+            } catch (e) {
+                console.error(`Error cargando página ${page}:`, e);
+            }
+        }
+        // Todas las páginas están en el DOM — ahora sí cargar los datos e inicializar
+        loadSchoolsData();
+    })();
+    </script>
+
+    <!-- ========== BOTTOM NAV MÓVIL ========== -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-lg border-t border-slate-200 md:hidden" style="padding-bottom: env(safe-area-inset-bottom);">
+        <div class="grid grid-cols-5 h-14">
+            <button onclick="navigateTo('inicio')" class="bottom-nav-btn flex flex-col items-center justify-center gap-0.5 text-slate-500" data-page="inicio">
+                <i class="fas fa-home text-lg"></i>
+                <span class="text-[10px] font-medium">Inicio</span>
+            </button>
+            <button onclick="navigateTo('mapa')" class="bottom-nav-btn flex flex-col items-center justify-center gap-0.5 text-slate-500" data-page="mapa">
+                <i class="fas fa-map-marked-alt text-lg"></i>
+                <span class="text-[10px] font-medium">Mapa</span>
+            </button>
+            <button onclick="navigateTo('catalogo')" class="bottom-nav-btn flex flex-col items-center justify-center gap-0.5 text-slate-500" data-page="catalogo">
+                <i class="fas fa-th-large text-lg"></i>
+                <span class="text-[10px] font-medium">Catálogo</span>
+            </button>
+            <button onclick="navigateTo('informacion')" class="bottom-nav-btn flex flex-col items-center justify-center gap-0.5 text-slate-500" data-page="informacion">
+                <i class="fas fa-info-circle text-lg"></i>
+                <span class="text-[10px] font-medium">Info</span>
+            </button>
+            <button onclick="navigateTo('acerca')" class="bottom-nav-btn flex flex-col items-center justify-center gap-0.5 text-slate-500" data-page="acerca">
+                <i class="fas fa-users text-lg"></i>
+                <span class="text-[10px] font-medium">Equipo</span>
+            </button>
+        </div>
+    </nav>
+
+    <style>
+    .bottom-nav-btn { transition: color 0.2s; border: none; background: transparent; cursor: pointer; }
+    .bottom-nav-btn.active { color: #0891b2; }
+    .bottom-nav-btn.active i { filter: drop-shadow(0 0 4px rgba(8,145,178,0.4)); }
+    /* Padding body para bottom nav en móvil */
+    @media (max-width: 767px) {
+        body { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
+        /* Subir FABs para no tapar con bottom nav */
+        #chatbot-btn { bottom: calc(14px + 56px + env(safe-area-inset-bottom)); }
+        #tutorial-trigger-btn { bottom: calc(14px + 56px + env(safe-area-inset-bottom)); }
+        .accessibility-toggle { bottom: calc(74px + 56px + env(safe-area-inset-bottom)); }
+    }
+    </style>
+
+    <script>
+    // Sincronizar bottom nav con página activa
+    function syncBottomNav(page) {
+        document.querySelectorAll('.bottom-nav-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.page === page);
+        });
+    }
+
+    // Toggle filtros mapa en móvil
+    function toggleMapFiltersPanel() {
+        if (window.innerWidth >= 1024) return;
+        const content = document.getElementById('map-filters-content');
+        const chevron = document.getElementById('filters-chevron');
+        if (!content) return;
+        const isHidden = content.style.display === 'none';
+        content.style.display = isHidden ? '' : 'none';
+        if (chevron) chevron.style.transform = isHidden ? '' : 'rotate(-90deg)';
+    }
+
+    // Inicializar filtros mapa colapsados en móvil
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.innerWidth < 1024) {
+            setTimeout(() => {
+                const content = document.getElementById('map-filters-content');
+                const chevron = document.getElementById('filters-chevron');
+                if (content) { content.style.display = 'none'; }
+                if (chevron) { chevron.style.transform = 'rotate(-90deg)'; }
+            }, 500);
+        }
+    });
+    </script>
+
+</body>
+</html>

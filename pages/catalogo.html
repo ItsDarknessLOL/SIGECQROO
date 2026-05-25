@@ -1,0 +1,55 @@
+<!-- SECCIÓN CATÁLOGO -->
+<section id="catalogo" class="page-section">
+    <div class="relative overflow-hidden text-white min-h-[200px] flex items-center hero-aurora-section">
+        <div class="absolute inset-0 bg-slate-900">
+            <div class="aurora-bg"></div>
+            <div class="aurora-bg" style="animation-delay: -5s;"></div>
+            <div class="aurora-bg" style="animation-delay: -10s;"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="font-display text-4xl md:text-5xl font-bold mb-4" data-aos="fade-down">Catálogo de Escuelas</h1>
+            <p class="text-teal-100 text-lg" data-aos="fade-up">Lista completa de instituciones educativas</p>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="glass rounded-2xl p-6 shadow-lg mb-8" data-aos="fade-up">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1 relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="search-input" placeholder="Buscar escuela..."
+                           class="w-full pl-12 pr-4 py-3 rounded-xl border border-cyan-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-all">
+                </div>
+                <select id="catalog-filter" class="px-6 py-3 rounded-xl border border-cyan-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none bg-white">
+                    <option value="all">Todos los niveles</option>
+                    <option value="preescolar">Preescolar</option>
+                    <option value="primaria">Primaria</option>
+                    <option value="secundaria">Secundaria</option>
+                    <option value="preparatoria">Media Superior</option>
+                </select>
+                <select id="catalog-sector" class="px-6 py-3 rounded-xl border border-cyan-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none bg-white">
+                    <option value="all">Público y Privado</option>
+                    <option value="publico">Solo Público</option>
+                    <option value="privado">Solo Privado</option>
+                </select>
+                <select id="catalog-rating" class="px-6 py-3 rounded-xl border border-cyan-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none bg-white">
+                    <option value="0">Cualquier calificación</option>
+                    <option value="4">⭐ 4.0 o más</option>
+                    <option value="4.5">⭐ 4.5 o más</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="schools-grid">
+            <!-- Se llena dinámicamente -->
+        </div>
+
+        <!-- Paginación inteligente -->
+        <div class="mt-12 flex justify-center items-center gap-1 flex-wrap" id="pagination">
+            <!-- Se genera dinámicamente -->
+        </div>
+
+        <!-- Info de paginación -->
+        <div class="text-center mt-4 text-sm text-slate-500" id="pagination-info"></div>
+    </div>
+</section>

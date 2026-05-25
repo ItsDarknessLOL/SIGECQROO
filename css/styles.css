@@ -1,0 +1,1362 @@
+/* ============================================================
+   SIGECQROO — styles.css
+   Estilos globales, variables, animaciones, componentes reutilizables
+   ============================================================ */
+
+/* ---------- Variables CSS para accesibilidad ---------- */
+:root {
+    --font-size-base: 16px;
+    --line-height: 1.5;
+    --contrast-mode: 1;
+}
+
+.font-small  { --font-size-base: 14px; }
+.font-large  { --font-size-base: 18px; }
+.font-xlarge { --font-size-base: 20px; }
+
+html {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height);
+}
+
+/* ---------- Modo oscuro (clase .dark en <html>) ---------- */
+.dark body {
+    background-color: #0f172a;
+    color: #e2e8f0;
+}
+
+.dark .glass {
+    background: rgba(30, 41, 59, 0.85);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .text-dark         { color: #f1f5f9; }
+.dark .text-slate-600    { color: #94a3b8; }
+.dark .text-slate-700    { color: #cbd5e1; }
+.dark .text-slate-800    { color: #e2e8f0; }
+.dark .bg-slate-50       { background-color: #1e293b; }
+.dark .bg-white          { background-color: #1e293b; }
+.dark .border-slate-200  { border-color: #334155; }
+.dark .border-cyan-100   { border-color: #0891b2; }
+
+/* ---------- Alto contraste ---------- */
+.high-contrast { filter: contrast(1.5); }
+
+.high-contrast .glass {
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid #000;
+}
+
+.high-contrast.dark .glass {
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid #fff;
+}
+
+/* ---------- Dislexia amigable ---------- */
+.dyslexia-friendly {
+    font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+    letter-spacing: 0.05em;
+    word-spacing: 0.1em;
+}
+
+/* ---------- Animaciones reducidas ---------- */
+.reduce-motion * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+}
+
+/* ---------- Panel de accesibilidad ---------- */
+.accessibility-panel {
+    position: fixed;
+    right: -320px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 320px;
+    background: white;
+    box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+    border-radius: 20px 0 0 20px;
+    z-index: 1000;
+    transition: right 0.3s ease;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.dark .accessibility-panel {
+    background: #1e293b;
+    color: white;
+}
+
+.accessibility-panel.open { right: 0; }
+
+.accessibility-toggle {
+    position: fixed;
+    right: 20px;
+    bottom: 100px;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #0891b2, #06b6d4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(8, 145, 178, 0.4);
+    z-index: 999;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.accessibility-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(8, 145, 178, 0.6);
+}
+
+.accessibility-toggle.active { right: 340px; background: #ef4444; }
+
+/* ---------- Modal Políticas ---------- */
+#privacy-modal-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(10,20,40,0.82);
+    backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem;
+}
+
+#privacy-modal-box {
+    background: white;
+    border-radius: 24px;
+    width: min(540px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+    animation: modalIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.dark #privacy-modal-box { background: #1e293b; color: #e2e8f0; }
+
+@keyframes modalIn {
+    from { opacity:0; transform: scale(0.88); }
+    to   { opacity:1; transform: scale(1); }
+}
+
+/* ---------- Map type selector ---------- */
+.map-type-btn {
+    padding: 6px 14px; border-radius: 8px; font-size: 13px;
+    font-weight: 600; cursor: pointer; border: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.map-type-btn.active {
+    border-color: #0891b2; background: #ecfeff; color: #0891b2;
+}
+
+.dark .map-type-btn.active { background: #164e63; color: #22d3ee; }
+
+/* ---------- Paginación inteligente ---------- */
+.pagination-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: #64748b;
+}
+
+/* ---------- Aurora background ---------- */
+.aurora-bg {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background:
+        radial-gradient(circle at 20% 50%, rgb(98, 19, 52) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgb(156, 35, 72) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgb(98, 19, 52) 0%, transparent 50%),
+        radial-gradient(circle at 60% 60%, rgb(156, 35, 72) 0%, transparent 50%);
+    animation: aurora 20s ease-in-out infinite;
+    filter: blur(60px);
+}
+
+@keyframes aurora {
+    0%, 100% { transform: translate(0, 0) rotate(180deg) scale(1); }
+    25% { transform: translate(2%, 2%) rotate(180deg) scale(1.1); }
+    50% { transform: translate(-1%, 3%) rotate(-180deg) scale(1.95); }
+    75% { transform: translate(3%, -2%) rotate(180deg) scale(1.05); }
+}
+
+/* ---------- Page sections ---------- */
+.page-section {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    display: none;
+}
+
+.page-section.active {
+    opacity: 1;
+    transform: translateY(0);
+    display: block;
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 8px; border: 2px solid #f1f5f9; }
+::-webkit-scrollbar-thumb:hover { background: #0891b2; }
+.dark ::-webkit-scrollbar-track { background: #1e293b; }
+.dark ::-webkit-scrollbar-thumb { background: #334155; border-color: #1e293b; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #0891b2; }
+
+/* ---------- Glass effect ---------- */
+.glass {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-dark {
+    background: rgba(8, 145, 178, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* ---------- Maps ---------- */
+#map, #map-full {
+    height: 500px;
+    width: 100%;
+    border-radius: 1rem;
+    z-index: 1;
+}
+
+/* ---------- Custom marker ---------- */
+.custom-marker {
+    background: linear-gradient(135deg, #0891b2, #22d3ee);
+    border: 3px solid white;
+    border-radius: 50% 50% 50% 0;
+    width: 40px;
+    height: 40px;
+    transform: rotate(-45deg);
+    box-shadow: 0 4px 15px rgba(8, 145, 178, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.custom-marker:hover {
+    transform: rotate(-45deg) scale(1.2);
+    box-shadow: 0 6px 20px rgba(8, 145, 178, 0.6);
+}
+
+.custom-marker i {
+    transform: rotate(45deg);
+    color: white;
+    font-size: 16px;
+}
+
+/* ---------- School card ---------- */
+.school-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.school-card:hover {
+    transform: translateY(-10px) rotateX(5deg);
+    box-shadow: 0 25px 50px -12px rgba(8, 145, 178, 0.25);
+}
+
+/* ---------- Loader ---------- */
+.loader {
+    border: 4px solid #ecfeff;
+    border-top: 4px solid #0891b2;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ---------- Gradient background ---------- */
+.gradient-bg {
+    background: linear-gradient(-45deg, #0891b2, #9103f0, #ee22bb, #fae900);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ---------- Nav link ---------- */
+.nav-link {
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #22d3ee, #0891b2);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    width: 100%;
+}
+
+/* ---------- Bubble ---------- */
+.bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(34, 211, 238, 0.1);
+    animation: float 8s infinite ease-in-out;
+}
+
+/* ---------- Floating accessibility ---------- */
+.floating-accessibility {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 998;
+}
+
+/* ---------- Tutorial styles ---------- */
+#tutorial-overlay {
+    position: fixed; inset: 0;
+    z-index: 2000; pointer-events: none;
+}
+
+#tutorial-overlay.active { pointer-events: all; }
+
+#tut-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(10,20,40,0.75);
+    backdrop-filter: blur(2px);
+    z-index: 2001;
+    opacity: 0; transition: opacity 0.4s;
+}
+
+#tutorial-overlay.active #tut-backdrop { opacity: 1; }
+
+#tut-highlight-box {
+    position: fixed;
+    z-index: 2002;
+    border-radius: 12px;
+    box-shadow:
+        0 0 0 4px #22d3ee,
+        0 0 0 9999px rgba(10,20,40,0.75);
+    transition: all 0.45s cubic-bezier(0.4,0,0.2,1);
+    pointer-events: none;
+    display: none;
+}
+
+#tut-highlight-box.visible { display: block; }
+
+#tut-arrow {
+    position: fixed;
+    z-index: 2004;
+    pointer-events: none;
+    display: none;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+}
+
+#tut-arrow.visible { display: block; }
+
+#tut-arrow svg { animation: arrowPulse 1s ease-in-out infinite alternate; }
+
+@keyframes arrowPulse {
+    from { transform: translateY(0px); }
+    to   { transform: translateY(8px); }
+}
+
+#tut-arrow.arrow-up svg    { animation: arrowPulseUp 1s ease-in-out infinite alternate; }
+
+@keyframes arrowPulseUp {
+    from { transform: translateY(0px); }
+    to   { transform: translateY(-8px); }
+}
+
+#tut-arrow.arrow-left svg  { animation: arrowPulseLeft 1s ease-in-out infinite alternate; }
+
+@keyframes arrowPulseLeft {
+    from { transform: translateX(0px); }
+    to   { transform: translateX(-8px); }
+}
+
+#tut-arrow.arrow-right svg { animation: arrowPulseRight 1s ease-in-out infinite alternate; }
+
+@keyframes arrowPulseRight {
+    from { transform: translateX(0px); }
+    to   { transform: translateX(8px); }
+}
+
+#tut-card {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2005;
+    background: white;
+    border-radius: 24px;
+    padding: 28px 28px 24px;
+    width: min(380px, calc(100vw - 32px));
+    box-shadow: 0 30px 80px rgba(0,0,0,0.35), 0 0 0 1px rgba(34,211,238,0.3);
+    display: none;
+    animation: tutCardIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes tutCardIn {
+    from { opacity:0; transform: translate(-50%,-50%) scale(0.88); }
+    to   { opacity:1; transform: translate(-50%,-50%) scale(1); }
+}
+
+.dark #tut-card { background: #1e293b; color: #e2e8f0; }
+
+.tut-step-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #cbd5e1; transition: all 0.3s; cursor: pointer;
+    border: none; padding: 0;
+}
+
+.tut-step-dot.active  { background: #0891b2; transform: scale(1.5); }
+.tut-step-dot.done    { background: #22d3ee; }
+
+/* ---------- Chatbot styles ---------- */
+#chatbot-btn {
+    position: fixed; right: 20px; bottom: 20px;
+    width: 58px; height: 58px; border-radius: 50%;
+    background: linear-gradient(135deg, #0891b2, #06b6d4);
+    color: white; font-size: 22px;
+    border: none; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(8,145,178,0.5);
+    z-index: 990; transition: all 0.3s ease;
+    display: flex; align-items: center; justify-content: center;
+}
+
+#chatbot-btn:hover { transform: scale(1.1); }
+
+.chatbot-badge {
+    position: absolute; top: -4px; right: -4px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #ef4444; color: white; font-size: 10px;
+    display: none; align-items: center; justify-content: center;
+    font-weight: bold; border: 2px solid white;
+}
+
+#chatbot-window {
+    position: fixed; right: 20px; bottom: 90px;
+    width: min(360px, calc(100vw - 32px));
+    max-height: 540px;
+    border-radius: 24px; background: white;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2), 0 0 0 1px rgba(8,145,178,0.15);
+    z-index: 991; display: flex; flex-direction: column; overflow: hidden;
+    transform: scale(0.85) translateY(20px);
+    transform-origin: bottom right;
+    opacity: 0; pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+#chatbot-window.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: all; }
+
+.dark #chatbot-window { background: #1e293b; color: #e2e8f0; }
+
+.chatbot-header {
+    background: linear-gradient(135deg, #0891b2, #06b6d4);
+    padding: 14px 18px; display: flex; align-items: center;
+    justify-content: space-between; color: white; flex-shrink: 0;
+}
+
+.bot-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; margin-right: 10px; flex-shrink: 0;
+}
+
+.chatbot-messages {
+    flex: 1; overflow-y: auto; padding: 14px;
+    display: flex; flex-direction: column; gap: 10px;
+    max-height: 300px;
+}
+
+.chatbot-messages::-webkit-scrollbar { width: 4px; }
+.chatbot-messages::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+.chat-msg {
+    max-width: 85%; padding: 10px 14px;
+    border-radius: 16px; font-size: 0.875rem; line-height: 1.5;
+    animation: msgIn 0.2s ease-out;
+}
+
+@keyframes msgIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+
+.chat-msg.bot {
+    background: #f1f5f9; color: #1e293b;
+    border-bottom-left-radius: 4px; align-self: flex-start;
+}
+
+.dark .chat-msg.bot { background: #334155; color: #e2e8f0; }
+
+.chat-msg.user {
+    background: linear-gradient(135deg,#0891b2,#06b6d4);
+    color: white; border-bottom-right-radius: 4px; align-self: flex-end;
+}
+
+.chat-typing {
+    background: #f1f5f9; border-radius: 16px; border-bottom-left-radius: 4px;
+    padding: 12px 16px; align-self: flex-start;
+    display: flex; gap: 4px; align-items: center;
+}
+
+.dark .chat-typing { background: #334155; }
+
+.typing-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #94a3b8; animation: typeDot 1.2s infinite;
+}
+
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+
+@keyframes typeDot{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
+.chatbot-input-area {
+    padding: 10px 14px; border-top: 1px solid #e2e8f0;
+    display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0;
+}
+
+.dark .chatbot-input-area { border-color: #334155; }
+
+.chatbot-input-area textarea {
+    flex: 1; resize: none; border-radius: 12px;
+    border: 1.5px solid #e2e8f0; padding: 8px 12px;
+    font-size: 0.875rem; font-family: inherit; outline: none;
+    background: #f8fafc; max-height: 80px; overflow-y: auto;
+    transition: border-color 0.2s; line-height: 1.4;
+}
+
+.dark .chatbot-input-area textarea { background: #0f172a; border-color: #334155; color: #e2e8f0; }
+
+.chatbot-input-area textarea:focus { border-color: #0891b2; }
+
+.chatbot-send-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg,#0891b2,#06b6d4);
+    color: white; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0; transition: all 0.2s;
+}
+
+.chatbot-send-btn:hover:not(:disabled) { transform: scale(1.1); }
+.chatbot-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.chat-quick-btns {
+    display: flex; flex-wrap: wrap; gap: 5px;
+    padding: 6px 14px 8px; flex-shrink: 0;
+}
+
+.chat-quick-btn {
+    font-size: 0.72rem; padding: 4px 10px;
+    border-radius: 20px; border: 1.5px solid #e2e8f0;
+    background: white; cursor: pointer; color: #0891b2;
+    transition: all 0.2s; font-family: inherit;
+}
+
+.dark .chat-quick-btn { background:#1e293b; border-color:#334155; color:#22d3ee; }
+
+.chat-quick-btn:hover { background: #ecfeff; border-color: #0891b2; }
+
+#tutorial-trigger-btn {
+    position: fixed; right: 88px; bottom: 20px;
+    width: 58px; height: 58px; border-radius: 50%;
+    background: linear-gradient(135deg,#7c3aed,#a855f7);
+    color: white; font-size: 20px; border: none; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+    z-index: 990; transition: all 0.3s ease;
+    display: flex; align-items: center; justify-content: center;
+}
+
+#tutorial-trigger-btn:hover { transform: scale(1.1); }
+
+
+/* ============================================================
+   OPTIMIZACIÓN MÓVIL — Mobile-first responsive
+   ============================================================ */
+
+/* ---------- Navbar móvil ---------- */
+@media (max-width: 767px) {
+    #navbar .h-20 {
+        height: 60px;
+    }
+
+    #navbar h1 {
+        font-size: 1.1rem;
+    }
+
+    #navbar p.text-xs {
+        display: none;
+    }
+
+    #navbar .w-12.h-12 {
+        width: 36px;
+        height: 36px;
+    }
+
+    #navbar .text-2xl.text-white {
+        font-size: 1rem;
+    }
+
+    #mobile-menu .space-y-1 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        padding: 10px;
+    }
+
+    #mobile-menu button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 12px 8px;
+        border-radius: 12px;
+        font-size: 0.82rem;
+        background: #f1f5f9;
+        text-align: center;
+    }
+
+    #mobile-menu button:hover {
+        background: #ecfeff;
+    }
+}
+
+/* ---------- Hero inicio móvil ---------- */
+@media (max-width: 767px) {
+    #hero-aurora.min-h-\[600px\],
+    .min-h-\[600px\] {
+        min-height: 480px;
+    }
+
+    /* Ocultar imagen hero en móvil chico, priorizar texto */
+    #hero-aurora .grid.md\:grid-cols-2 > div:last-child {
+        display: none;
+    }
+
+    #hero-aurora .grid.md\:grid-cols-2 > div:first-child {
+        text-align: center;
+    }
+
+    #hero-aurora h1 {
+        font-size: 2rem !important;
+        line-height: 1.2;
+    }
+
+    #hero-aurora p.text-xl {
+        font-size: 1rem;
+    }
+
+    #hero-aurora .flex.flex-wrap.gap-4 {
+        justify-content: center;
+    }
+
+    #hero-aurora .px-8.py-4 {
+        padding: 12px 20px;
+        font-size: 0.875rem;
+    }
+
+    /* Badge encabezado */
+    #hero-aurora .inline-block.px-4 {
+        font-size: 0.75rem;
+        padding: 6px 12px;
+    }
+}
+
+/* ---------- Action bar tabs móvil ---------- */
+@media (max-width: 767px) {
+    #home-action-bar {
+        top: 60px;
+    }
+
+    #home-tabs {
+        gap: 4px;
+        padding: 4px 0;
+    }
+
+    .home-tab-btn {
+        padding: 8px 12px;
+        font-size: 0.78rem;
+    }
+
+    .home-tab-btn span {
+        display: none;
+    }
+
+    .home-tab-btn i {
+        font-size: 1rem;
+    }
+
+    .home-tab-btn.active span {
+        display: inline;
+    }
+}
+
+/* ---------- Estadísticas móvil ---------- */
+@media (max-width: 767px) {
+    #home-panel-estadisticas .py-12 {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+
+    #home-panel-estadisticas h2.text-4xl {
+        font-size: 1.6rem;
+    }
+
+    /* Grid 2 columnas en móvil (ya es grid-cols-2 por defecto, ok) */
+    #home-panel-estadisticas .glass.rounded-2xl.p-6 {
+        padding: 1rem;
+    }
+
+    #home-panel-estadisticas .w-14.h-14 {
+        width: 42px;
+        height: 42px;
+    }
+
+    #home-panel-estadisticas h3.text-3xl {
+        font-size: 1.5rem;
+    }
+
+    /* Distribución por sector: stack en móvil */
+    #home-panel-estadisticas .grid.md\:grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+
+    #home-panel-estadisticas .glass.rounded-3xl.p-8 {
+        padding: 1.2rem;
+    }
+}
+
+/* ---------- Mapa móvil ---------- */
+@media (max-width: 1023px) {
+    /* Panel lateral arriba del mapa en tablet/móvil */
+    #mapa .flex-col.lg\:flex-row {
+        flex-direction: column !important;
+    }
+
+    #mapa .lg\:w-\[300px\] {
+        width: 100% !important;
+    }
+
+    /* Desactivar sticky en móvil para el panel lateral */
+    #mapa .sticky.top-24 {
+        position: relative;
+        top: auto;
+    }
+}
+
+@media (max-width: 767px) {
+    #mapa .min-h-\[200px\] {
+        min-height: 130px;
+        padding: 1rem 0;
+    }
+
+    #mapa h1 {
+        font-size: 1.6rem !important;
+    }
+
+    #mapa p.text-lg {
+        font-size: 0.9rem;
+    }
+
+    /* Mapa altura reducida en móvil */
+    #map, #map-full {
+        height: 320px;
+    }
+
+    /* Botones de tipo de mapa más pequeños */
+    .map-type-btn {
+        padding: 5px 10px;
+        font-size: 11px;
+    }
+
+    /* Filtros compactos */
+    #mapa .glass.rounded-2xl.p-5 {
+        padding: 1rem;
+    }
+
+    /* Rating pills más pequeños */
+    .rating-pill {
+        padding: 4px 8px !important;
+        font-size: 0.72rem !important;
+    }
+
+    /* Resultados del mapa */
+    #mapa .py-6 {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+}
+
+/* ---------- Catálogo móvil ---------- */
+@media (max-width: 767px) {
+    /* Filtros en columna en móvil */
+    #catalogo .flex-col.md\:flex-row {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    #catalogo select,
+    #catalogo input {
+        width: 100% !important;
+        font-size: 0.875rem;
+    }
+
+    /* Grid 1 columna en móvil */
+    #catalogo .grid.md\:grid-cols-2.lg\:grid-cols-3 {
+        grid-template-columns: 1fr !important;
+    }
+
+    #catalogo .py-12 {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+
+    #catalogo h1 {
+        font-size: 1.6rem !important;
+    }
+
+    /* Paginación más compacta */
+    #pagination {
+        gap: 4px;
+    }
+
+    #pagination button {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 0.8rem;
+        min-width: 36px !important;
+    }
+}
+
+/* ---------- Información móvil ---------- */
+@media (max-width: 767px) {
+    #informacion .grid.md\:grid-cols-2 {
+        grid-template-columns: 1fr !important;
+    }
+
+    #informacion .grid.md\:grid-cols-3 {
+        grid-template-columns: 1fr !important;
+    }
+
+    #informacion h1 {
+        font-size: 1.6rem !important;
+    }
+
+    #informacion h2.text-3xl {
+        font-size: 1.4rem;
+    }
+
+    /* Ocultar imagen decorativa en info */
+    #informacion .relative[data-aos="fade-left"] {
+        display: none;
+    }
+
+    #informacion .py-16 {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    #informacion .glass.rounded-2xl.p-8 {
+        padding: 1.2rem;
+    }
+}
+
+/* ---------- Acerca de móvil ---------- */
+@media (max-width: 767px) {
+    #acerca .grid.md\:grid-cols-4 {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 1.5rem;
+    }
+
+    #acerca .grid.md\:grid-cols-3 {
+        grid-template-columns: 1fr !important;
+    }
+
+    #acerca h1 {
+        font-size: 1.6rem !important;
+    }
+
+    #acerca h2.text-3xl {
+        font-size: 1.5rem;
+    }
+
+    #acerca .w-20.h-20 {
+        width: 60px;
+        height: 60px;
+        font-size: 1rem;
+    }
+
+    #acerca .w-32.h-32 {
+        width: 90px;
+        height: 90px;
+    }
+
+    #acerca .glass.rounded-3xl.p-8.md\:p-12 {
+        padding: 1.2rem;
+    }
+
+    #acerca .py-16 {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    #acerca .mb-16 {
+        margin-bottom: 2.5rem;
+    }
+}
+
+/* ---------- Botones flotantes móvil ---------- */
+@media (max-width: 767px) {
+    /* Acercar los FABs al borde en móvil */
+    #chatbot-btn {
+        right: 14px;
+        bottom: 14px;
+        width: 50px;
+        height: 50px;
+        font-size: 18px;
+    }
+
+    #tutorial-trigger-btn {
+        right: 72px;
+        bottom: 14px;
+        width: 50px;
+        height: 50px;
+        font-size: 16px;
+    }
+
+    .accessibility-toggle {
+        right: 14px;
+        bottom: 74px;
+        width: 46px;
+        height: 46px;
+        font-size: 20px;
+    }
+
+    /* Panel de accesibilidad 100% ancho en móvil */
+    .accessibility-panel {
+        width: 100%;
+        right: -100%;
+        border-radius: 20px 20px 0 0;
+        top: auto;
+        bottom: 0;
+        transform: none;
+        max-height: 80vh;
+    }
+
+    .accessibility-panel.open {
+        right: 0;
+    }
+
+    .accessibility-toggle.active {
+        right: 14px;
+        bottom: 74px;
+        background: #ef4444;
+    }
+}
+
+/* ---------- Chatbot móvil ---------- */
+@media (max-width: 767px) {
+    #chatbot-window {
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        max-height: 80vh;
+        border-radius: 20px 20px 0 0;
+        transform-origin: bottom center;
+    }
+}
+
+/* ---------- Cards de escuelas móvil ---------- */
+@media (max-width: 767px) {
+    .school-card:hover {
+        transform: translateY(-4px);
+    }
+}
+
+/* ---------- Modal móvil ---------- */
+@media (max-width: 767px) {
+    #privacy-modal-box {
+        border-radius: 16px;
+        margin: 1rem;
+    }
+}
+
+/* ---------- Tutorial móvil ---------- */
+@media (max-width: 767px) {
+    #tut-card {
+        width: calc(100vw - 24px);
+        padding: 20px;
+        bottom: 12px;
+        top: auto;
+        left: 12px;
+        right: 12px;
+        transform: none;
+    }
+}
+
+/* ---------- Footer móvil ---------- */
+@media (max-width: 767px) {
+    footer .grid.md\:grid-cols-3 {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem;
+        text-align: center;
+    }
+
+    footer .flex.items-center {
+        justify-content: center;
+    }
+}
+
+/* ---------- Scrollbar oculto en móvil ---------- */
+@media (max-width: 767px) {
+    ::-webkit-scrollbar {
+        width: 4px;
+    }
+}
+
+/* ---------- Touch targets mínimos ---------- */
+@media (max-width: 767px) {
+    button, a, [role="button"] {
+        min-height: 40px;
+    }
+}
+
+/* ---------- Prevenir zoom en inputs iOS ---------- */
+@media (max-width: 767px) {
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+}
+
+/* ============================================================
+   POLISH & BUG FIXES — Final touch improvements
+   ============================================================ */
+
+/* ---------- Nav link active underline indicator ---------- */
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #0891b2, #22d3ee);
+    border-radius: 2px;
+    transform: scaleX(0);
+    transition: transform 0.25s ease;
+}
+.nav-link:hover::after,
+.nav-link.active::after {
+    transform: scaleX(1);
+}
+.nav-link.active {
+    color: #0891b2 !important;
+    font-weight: 600;
+}
+
+/* ---------- School card improved hover ---------- */
+.school-card {
+    cursor: pointer;
+    border: 1px solid rgba(8,145,178,0.08);
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
+                box-shadow 0.35s ease,
+                border-color 0.25s ease;
+}
+.school-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px -8px rgba(8,145,178,0.2), 0 0 0 1px rgba(8,145,178,0.12);
+    border-color: rgba(8,145,178,0.2);
+}
+@media (max-width: 767px) {
+    .school-card:hover { transform: translateY(-4px); }
+}
+
+/* ---------- Navbar glassmorphism improvements ---------- */
+#navbar {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(8,145,178,0.08);
+}
+.dark #navbar {
+    border-bottom-color: rgba(255,255,255,0.06);
+}
+
+/* ---------- Navbar logo glow ---------- */
+#navbar .gradient-bg {
+    box-shadow: 0 0 20px rgba(8,145,178,0.3);
+}
+
+/* ---------- Footer link hover improved ---------- */
+footer ul li button,
+footer ul li a {
+    transition: color 0.2s, transform 0.2s;
+    display: inline-block;
+}
+footer ul li button:hover,
+footer ul li a:hover {
+    transform: translateX(4px);
+}
+
+/* ---------- Gradient-bg subtle ring ---------- */
+.gradient-bg {
+    position: relative;
+}
+.gradient-bg::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: inherit;
+    filter: blur(8px);
+    opacity: 0.35;
+    z-index: -1;
+}
+
+/* ---------- Bubble decorative background improved ---------- */
+.bubble {
+    position: absolute;
+    background: radial-gradient(circle, rgba(8,145,178,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: bubbleFloat 12s ease-in-out infinite;
+    pointer-events: none;
+}
+@keyframes bubbleFloat {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+    50% { transform: translateY(-30px) scale(1.05); opacity: 0.3; }
+}
+
+/* ---------- Smooth page transitions ---------- */
+.page-section {
+    transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ---------- Improved glass shadow ---------- */
+.glass {
+    box-shadow: 0 4px 24px rgba(8,145,178,0.06), 0 1px 4px rgba(0,0,0,0.04);
+}
+.dark .glass {
+    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+}
+
+/* ---------- FAB button improved aesthetics ---------- */
+#chatbot-btn, #tutorial-trigger-btn, .accessibility-toggle {
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+}
+#chatbot-btn:hover, #tutorial-trigger-btn:hover, .accessibility-toggle:hover {
+    transform: scale(1.12) translateY(-2px) !important;
+}
+
+/* ---------- Fix chatbot window z-order on mobile ---------- */
+#chatbot-window {
+    z-index: 995;
+}
+
+/* ---------- Hero section padding consistency ---------- */
+.hero-aurora-section {
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+}
+
+/* ---------- Section hero content min-height fix ---------- */
+.hero-aurora-section .max-w-7xl {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+}
+
+/* ---------- Pagination improvements ---------- */
+#pagination button {
+    transition: background-color 0.2s, color 0.2s, transform 0.15s;
+}
+#pagination button:hover:not(:disabled):not(.bg-cyan-600) {
+    transform: scale(1.08);
+}
+
+/* ---------- Filter selects improved ---------- */
+#catalogo select, #catalogo input[type="text"] {
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background-image: none;
+}
+
+/* ---------- Map tool buttons ---------- */
+.tool-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1.5px solid #e2e8f0;
+    background: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s, transform 0.15s;
+    font-family: inherit;
+}
+.tool-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    transform: translateX(3px);
+}
+.dark .tool-btn {
+    border-color: #334155;
+    color: #e2e8f0;
+}
+.dark .tool-btn:hover {
+    background: #334155;
+}
+.tool-btn-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color 0.2s;
+}
+
+/* ---------- Rating pills in map ---------- */
+.rating-pill {
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1.5px solid #e2e8f0;
+    background: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    color: #64748b;
+}
+.dark .rating-pill {
+    background: #1e293b;
+    border-color: #334155;
+    color: #94a3b8;
+}
+.rating-pill:hover {
+    border-color: #0891b2;
+    color: #0891b2;
+    background: #ecfeff;
+}
+.rating-pill.active {
+    background: linear-gradient(135deg, #0891b2, #06b6d4);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 2px 8px rgba(8,145,178,0.3);
+}
+
+/* ---------- Map zone stats improved ---------- */
+.zone-stat-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.zone-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* ---------- Sector toggle in map ---------- */
+.sector-toggle {
+    transition: all 0.2s;
+}
+.sector-toggle:hover {
+    transform: scale(1.02);
+}
+
+/* ---------- Dark mode chat quick buttons ---------- */
+.dark .chat-quick-btn:hover {
+    background: #334155;
+    border-color: #22d3ee;
+}
+
+/* ---------- Accessibility panel improved close button ---------- */
+.accessibility-panel input[type="checkbox"] {
+    cursor: pointer;
+}
+
+/* ---------- Bottom nav smooth active indicator ---------- */
+.bottom-nav-btn {
+    position: relative;
+    transition: color 0.2s, transform 0.2s !important;
+}
+.bottom-nav-btn.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
+    background: #0891b2;
+    border-radius: 0 0 3px 3px;
+}
+.bottom-nav-btn:active {
+    transform: scale(0.92);
+}
+
+/* ---------- Image loading fallback ---------- */
+img {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+/* ---------- Improved focus rings ---------- */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid #0891b2;
+    outline-offset: 2px;
+}
+
+/* ---------- Zone stat container improved ---------- */
+#zone-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+@media (min-width: 768px) {
+    #zone-stats { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ---------- Smooth scroll for anchor navigation ---------- */
+html { scroll-behavior: smooth; }
+
+/* ---------- Map result item hover ---------- */
+.map-result-item {
+    transition: background-color 0.15s, transform 0.15s;
+    cursor: pointer;
+}
+.map-result-item:hover {
+    background: #f0f9ff;
+    transform: translateX(3px);
+}
+.dark .map-result-item:hover {
+    background: #1e3a4c;
+}
+
+/* ---------- Privacy modal scroll styling ---------- */
+#privacy-modal-box::-webkit-scrollbar { width: 5px; }
+#privacy-modal-box::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
